@@ -4,9 +4,9 @@ import { buildKimiMessages, parseEnvFile } from "./kimiApiPlugin";
 describe("parseEnvFile", () => {
   it("parses KEY=VALUE and ignores comments", () => {
     const out = parseEnvFile(
-      "# comment\nKIMI_MODEL=moonshot-v1-8k\nKIMI_BASE_URL='https://api.moonshot.cn/v1'\n",
+      "# comment\nKIMI_MODEL=kimi-k3\nKIMI_BASE_URL='https://api.moonshot.cn/v1'\n",
     );
-    expect(out.KIMI_MODEL).toBe("moonshot-v1-8k");
+    expect(out.KIMI_MODEL).toBe("kimi-k3");
     expect(out.KIMI_BASE_URL).toBe("https://api.moonshot.cn/v1");
   });
 });

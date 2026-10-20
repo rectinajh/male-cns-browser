@@ -63,7 +63,7 @@ export function loadKimiEnv(webRoot: string): KimiEnv | null {
     /\/$/,
     "",
   );
-  const model = merged.KIMI_MODEL ?? "moonshot-v1-8k";
+  const model = merged.KIMI_MODEL ?? "kimi-k3";
   if (!apiKey) return null;
   return { apiKey, baseUrl, model };
 }
@@ -186,7 +186,7 @@ export function kimiApiPlugin(webRoot: string): Plugin {
             body: JSON.stringify({
               model: env.model,
               messages,
-              temperature: 0.3,
+              temperature: 1,
             }),
           });
           const data = (await upstream.json()) as {

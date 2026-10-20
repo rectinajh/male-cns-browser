@@ -71,7 +71,7 @@ Vite serves them at `/reference/...`. Without the copies the panel frames stay e
 1. 复制 [`.env.example`](./.env.example) 里的变量到：
    - `~/.config/male-cns-browser/kimi.env`（推荐，`chmod 600`），或
    - `web/.env.local`（已被 `*.local` gitignore）
-2. 填入 `KIMI_API_KEY` / `KIMI_BASE_URL` / `KIMI_MODEL`（默认 `https://api.moonshot.cn/v1` + `moonshot-v1-8k`）
+2. 填入 `KIMI_API_KEY` / `KIMI_BASE_URL` / `KIMI_MODEL`（默认 `https://api.moonshot.cn/v1` + `kimi-k3`；旧版 `moonshot-v1-8k` 已下线）
 3. `cd web && npm run dev` 后在侧栏提问
 
 切勿把真实 Key 提交进 Git / README / Issue。
