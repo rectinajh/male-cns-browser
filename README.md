@@ -41,7 +41,7 @@ npm run build
 - Click key nodes (somas) to see id / type / side and neighbors
 - Press **思考一次** for a random edge walk: **blue lightning** (`#3BA7FF` / `#5B9FFF`) crackles along real arbors (jagged bolt, flicker, tip branches), somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
 - **AI 查询（问 AI）**：选中神经元后可提问类型含义 / 功能科普；密钥经本地 Vite `/api/kimi` 代理，**不会**进浏览器（见下）
-- Right-hand panel: Janelia reference renders (local copies; see below)
+- Right-hand panel: Janelia reference renders (committed JPEGs under `web/public/reference/`)
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; optional neuPrint enrich via `scripts/prepare/enrich_neuprint.py`
 
 ## Shipped subset (current)
@@ -62,21 +62,16 @@ Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.
 
 - **Code:** MIT (see [`LICENSE`](./LICENSE))
 - **MaleCNS data:** CC-BY — [FlyEM / HHMI Janelia Male CNS](https://male-cns.janelia.org/) (`male-cns:v1.0`)
-- Do **not** commit neuPrint / Kimi tokens, `web/.env.local`, `kimi.env`, full synapse tables, or large reference PNGs
+- Do **not** commit neuPrint / Kimi tokens, `web/.env.local`, `kimi.env`, or full synapse tables
 
-## Reference images (local)
+## Reference images
 
-The right-hand panel expects two Janelia reference renders under `web/public/reference/` (not committed — ~12MB each):
+Right-hand panel assets are committed (JPEG, ~1–1.5MB each) under `web/public/reference/`:
 
-```bash
-mkdir -p web/public/reference
-cp dimorphic-brain-only.png \
-  web/public/reference/dimorphic-brain-only.png
-cp mcns-median-size-per-type-40-0626-3840x2160.png \
-  web/public/reference/mcns-median-size-per-type-40-0626-3840x2160.png
-```
+- `dimorphic-brain-only.jpg`
+- `mcns-median-size-per-type-40-0626-3840x2160.jpg`
 
-Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
+Vite / Vercel serve them at `/reference/...`.
 
 
 ## AI 神经元解释（本地 / Vercel）

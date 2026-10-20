@@ -7,6 +7,5 @@ web/coverage
 **/.env.*
 **/kimi.env
 .neuprint.token
-web/public/reference
 *.log
 .DS_Store

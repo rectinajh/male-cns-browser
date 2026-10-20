@@ -6,11 +6,9 @@ web/node_modules/
 web/dist/
 web/coverage/
 
-# local reference renders (repo root + public copies ~12MB each)
+# large / local PNG renders (repo root copies); hero + compressed reference JPGs are committed
 *.png
-!web/public/**/*.png
 !docs/assets/screenshot-hero.png
-web/public/reference/**
 
 # secrets / local env (never commit)
 .env

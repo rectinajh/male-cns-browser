@@ -1,11 +1,11 @@
 const REFERENCES = [
   {
-    src: "/reference/dimorphic-brain-only.png",
+    src: "/reference/dimorphic-brain-only.jpg",
     caption: "二型脑参考图",
     alt: "雄性 CNS 二型脑参考渲染",
   },
   {
-    src: "/reference/mcns-median-size-per-type-40-0626-3840x2160.png",
+    src: "/reference/mcns-median-size-per-type-40-0626-3840x2160.jpg",
     caption: "各类型中位尺寸",
     alt: "雄性 CNS 各类型中位尺寸参考渲染",
   },
