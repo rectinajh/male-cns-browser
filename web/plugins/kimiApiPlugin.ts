@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import type { ServerResponse } from "node:http";
 import type { Plugin, Connect } from "vite";
 
 export type KimiEnv = {
@@ -126,7 +127,7 @@ async function readJsonBody(req: Connect.IncomingMessage): Promise<unknown> {
 }
 
 function sendJson(
-  res: Connect.ServerResponse,
+  res: ServerResponse,
   status: number,
   payload: unknown,
 ): void {

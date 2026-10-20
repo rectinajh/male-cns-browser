@@ -1,0 +1,12 @@
+web/node_modules
+node_modules
+web/dist
+web/coverage
+.git
+**/.env
+**/.env.*
+**/kimi.env
+.neuprint.token
+web/public/reference
+*.log
+.DS_Store
