@@ -71,11 +71,11 @@ export function KeyNodes({ neurons, neighborIds, chainIds, nodeRadius }: Props) 
               emissive={
                 selected || onChain ? "#3BA7FF" : neighbor ? color : "#000000"
               }
-              emissiveIntensity={selected ? 0.95 : onChain ? 0.7 : neighbor ? 0.25 : 0}
-              roughness={0.4}
-              metalness={0.12}
-              transparent={dimmed}
-              opacity={dimmed ? 0.28 : 1}
+              emissiveIntensity={selected ? 0.75 : onChain ? 0.55 : neighbor ? 0.12 : 0}
+              roughness={0.55}
+              metalness={0.08}
+              transparent
+              opacity={dimmed ? 0.16 : selected || onChain ? 0.92 : neighbor ? 0.7 : 0.55}
             />
           </mesh>
         );

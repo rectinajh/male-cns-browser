@@ -33,11 +33,11 @@ export function NeuronLines({
       const onChain = chainIds?.has(n.id) ?? false;
       let c: THREE.Color;
       if (onChain) {
-        c = base.clone().lerp(new THREE.Color("#3BA7FF"), 0.55);
-        c.offsetHSL(0, 0.08, 0.18);
+        c = base.clone().lerp(new THREE.Color("#3BA7FF"), 0.4);
+        c.offsetHSL(0, 0.05, 0.1);
       } else if (isSel) {
-        c = base.clone().lerp(new THREE.Color("#ffffff"), 0.35);
-        c.offsetHSL(0, 0.05, 0.12);
+        c = base.clone().lerp(new THREE.Color("#ffffff"), 0.2);
+        c.offsetHSL(0, 0.02, 0.06);
       } else if (isN) {
         c = base.clone().offsetHSL(0, 0, 0.05);
       } else if (selectedId != null || (chainIds && chainIds.size > 0)) {
@@ -95,11 +95,11 @@ export function NeuronLines({
   return (
     <group>
       <lineSegments geometry={lineGeo}>
-        <lineBasicMaterial vertexColors transparent opacity={0.88} />
+        <lineBasicMaterial vertexColors transparent opacity={0.42} />
       </lineSegments>
       {neighborEdgeGeo && (
         <lineSegments geometry={neighborEdgeGeo}>
-          <lineBasicMaterial color="#7ec8ff" transparent opacity={0.95} />
+          <lineBasicMaterial color="#3d6a8c" transparent opacity={0.5} />
         </lineSegments>
       )}
     </group>

@@ -16,13 +16,15 @@ export function ReferencePanel() {
     <aside className="reference-panel" aria-label="Reference renders">
       {REFERENCES.map((item) => (
         <figure key={item.src} className="reference-figure">
-          <img
-            className="reference-image"
-            src={item.src}
-            alt={item.alt}
-            loading="lazy"
-            decoding="async"
-          />
+          <div className="reference-media">
+            <img
+              className="reference-image"
+              src={item.src}
+              alt={item.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <figcaption className="reference-caption">{item.caption}</figcaption>
         </figure>
       ))}

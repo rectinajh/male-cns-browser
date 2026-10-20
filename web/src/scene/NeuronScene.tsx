@@ -156,9 +156,9 @@ function SceneContent({ data, source }: Props) {
   return (
     <>
       <color attach="background" args={["#05070c"]} />
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[bounds.radius, bounds.radius, bounds.radius]} intensity={0.95} />
-      <directionalLight position={[-bounds.radius, -bounds.radius * 0.4, -bounds.radius]} intensity={0.3} />
+      <ambientLight intensity={0.28} />
+      <directionalLight position={[bounds.radius, bounds.radius, bounds.radius]} intensity={0.42} />
+      <directionalLight position={[-bounds.radius, -bounds.radius * 0.4, -bounds.radius]} intensity={0.12} />
       <AutoOrbit center={bounds.center} radius={bounds.radius} />
       <CameraFramer center={bounds.center} radius={bounds.radius} />
       <NeuronLines
