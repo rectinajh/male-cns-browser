@@ -1,8 +1,23 @@
+![Male CNS Browser screenshot](./docs/assets/screenshot-hero.png)
+
 # Male CNS Browser
+
+**Live demo:** _TBD — deploying to Vercel_
 
 Open-source **3D fruit-fly CNS neuron browser** for exploring a dense MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” lightning pulse along a fresh random connectome walk each click.
 
 > Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required at runtime).
+
+
+## Deploy (Vercel)
+
+Repo root `vercel.json` builds the Vite app in `web/` (`npm ci` + `npm run build` → `web/dist`) and serves `api/kimi` as a serverless function. `subset.json` is ~21MB static data.
+
+```bash
+vercel link   # once
+vercel env add KIMI_API_KEY
+vercel --prod
+```
 
 ## Quick start
 
@@ -64,15 +79,21 @@ cp mcns-median-size-per-type-40-0626-3840x2160.png \
 Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
 
 
-## Kimi 神经元解释（本地）
+## Kimi 神经元解释（本地 / Vercel）
 
-浏览器里「Kimi 查询」会把问题 + 当前神经元上下文（id / name / type / side）POST 到本地 Vite 中间件 `POST /api/kimi`，由服务端读取密钥再转调 Moonshot Chat Completions。**API Key 不会下发到前端。**
+浏览器里「Kimi 查询」会把问题 + 当前神经元上下文（id / name / type / side）`POST /api/kimi`，由**服务端**读取密钥再转调 Moonshot Chat Completions。**API Key 不会下发到前端。**
+
+**本地开发**
 
 1. 复制 [`.env.example`](./.env.example) 里的变量到：
    - `~/.config/male-cns-browser/kimi.env`（推荐，`chmod 600`），或
-   - `web/.env.local`（已被 `*.local` gitignore）
+   - `web/.env.local`（已被 gitignore）
 2. 填入 `KIMI_API_KEY` / `KIMI_BASE_URL` / `KIMI_MODEL`（默认 `https://api.moonshot.cn/v1` + `kimi-k3`；旧版 `moonshot-v1-8k` 已下线）
-3. `cd web && npm run dev` 后在侧栏提问
+3. `cd web && npm run dev` 后在侧栏提问（Vite 插件 `web/plugins/kimiApiPlugin.ts`）
+
+**Vercel 生产**
+
+在项目 Environment Variables 中设置同样的 `KIMI_*`；由根目录 [`api/kimi.js`](./api/kimi.js) 无服务器函数代理。未配置时 3D 浏览器仍可用，查询会返回 503 提示。
 
 切勿把真实 Key 提交进 Git / README / Issue。
 
@@ -86,8 +107,10 @@ Vite serves them at `/reference/...`. Without the copies the panel frames stay e
 
 ```text
 web/                 Vite + React + R3F app
+api/kimi.js          Vercel serverless Kimi proxy
+vercel.json          Build web/ → web/dist
 scripts/prepare/     SWC subset builder + optional neuPrint enrich
-docs/                Design, plan, data notes
+docs/                Design, plan, data notes, screenshot-hero.png
 ```
 
 ## Non-goals (v0.1)

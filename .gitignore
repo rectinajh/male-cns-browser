@@ -9,6 +9,7 @@ web/coverage/
 # local reference renders (repo root + public copies ~12MB each)
 *.png
 !web/public/**/*.png
+!docs/assets/screenshot-hero.png
 web/public/reference/**
 
 # secrets / local env (never commit)
@@ -18,3 +19,5 @@ web/public/reference/**
 **/.env.local
 **/kimi.env
 .neuprint.token
+
+.vercel/
