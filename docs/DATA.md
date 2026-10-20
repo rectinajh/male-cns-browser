@@ -4,24 +4,49 @@
 
 | Field | Value |
 | --- | --- |
-| Purpose | Offline CI / first-run fixture |
-| Geometry | Synthetic, anatomically flavored: upper brain blob, mid neck, lower VNC stub |
-| Scale | Display units roughly in `[-1, 1]` (not raw MaleCNS EM voxels) |
-| Counts | ≥8 neurons, ≥10 edges, ≥1 thought path (`escape-demo`) |
-| License note | Schema & attribution follow MaleCNS CC-BY; **geometry itself is synthetic** and not redistributed Janelia SWC |
-
-## Target production subset (follow-up)
-
-| Field | Value |
-| --- | --- |
 | Dataset | `male-cns:v1.0` |
-| Source | https://male-cns.janelia.org/ |
-| License | CC-BY (attribute FlyEM / HHMI Janelia and collaborators) |
-| Size | ~200–400 connected neurons (sensory → interneuron → descending / VNC) |
-| Tooling | `scripts/prepare/prepare.py` + neuPrint token |
+| Source | https://male-cns.janelia.org/ (public GCS SWC + flat connectome) |
+| License | **CC-BY** — attribute FlyEM / HHMI Janelia and MaleCNS collaborators |
+| Geometry | **Real** MaleCNS SWC skeletons (downsampled), not synthetic |
+| Counts | ~250–350 neurons, hundreds–thousands of edges, ≥2 thought paths |
+| SWC URL | `https://storage.googleapis.com/flyem-male-cns/v1.0/segmentation/skeletons-malecns/skeletons-swc/{bodyId}.swc` |
+| Weights | `connectome-weights-male-cns-v1.0-minconf-0.5.feather` (body_pre, body_post, weight) |
+| Annotations | `body-annotations-male-cns-v1.0-minconf-0.5.feather` |
 
-Do **not** commit full multi-GB synapse tables. Only the small demo subset needed to run belongs in-repo.
+### Coordinate scale
+
+MaleCNS SWC / `somaLocation` are in **8 nm voxel** units.
+
+Display transform (see `meta.scale` in `subset.json`):
+
+1. Subtract the subset centroid (voxel space)
+2. Remap axes so the brain↔VNC long axis is **+Y** (brain) / **−Y** (VNC) when possible
+3. Multiply by **`0.001`** so scene units sit roughly in **[-50, 50]** (outliers may extend further)
+
+`neurons[].skeleton` is stored as **interleaved segment endpoint pairs** (parent→child after downsample). The renderer steps by 2 when drawing `LineSegments`.
+
+### Subset curation
+
+`scripts/prepare/build_subset.py` (also runnable from a data cache dir) selects Traced bodies spanning:
+
+- optic / visual types (both sides)
+- descending & ascending neurons
+- central complex / Kenyon / MBON
+- VNC-ish (`somaNeuromere` / `mancType` / `exitNerve` / `vnc_*` superclass)
+- high-weight hubs touching the set
+
+Do **not** commit full multi-GB synapse tables — only this small demo subset.
+
+## Regenerating
+
+```bash
+# annotations + weights + SWC cache live outside the repo by default
+python scripts/prepare/build_subset.py
+# or: /workspace/male-cns-data/build_subset.py
+```
+
+Requires Python 3.10+, `pyarrow`, `pandas`, `numpy`, and network access to GCS.
 
 ## Schema
 
-See design spec §5.1 (`meta`, `neurons`, `edges`, `thoughts`). Coordinates for a real export should document the EM→display scale factor here when prepare lands.
+See design spec §5.1 (`meta`, `neurons`, `edges`, `thoughts`).

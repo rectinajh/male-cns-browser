@@ -1,20 +1,12 @@
-# prepare — MaleCNS subset export
+# Prepare / export
 
-Builds a curated `subset.json` from neuPrint (`male-cns:v1.0`) for the browser.
-
-## Status (v0.1)
-
-`prepare.py` is a **stub**: it documents the intended workflow and exits successfully without a token so CI stays green. Real SWC/adjacency export is a follow-up once a neuPrint token is available.
-
-## Usage (future)
+- **`build_subset.py`** — builds `web/public/data/subset.json` from public MaleCNS GCS
+  (annotations feather, connectome-weights feather, per-body SWC). No neuPrint token required.
+- **`prepare.py`** — legacy neuPrint stub (optional token path; not used for the committed subset).
 
 ```bash
-export NEUPRINT_TOKEN=...   # or pass --token
-python prepare.py --out ../../web/public/data/subset.json
+export MALECNS_DATA_DIR=/path/to/cache   # annotations + weights + swc/
+python scripts/prepare/build_subset.py
 ```
 
-Requires `neuprint-python` and network access to Janelia neuPrint.
-
-## Output
-
-Writes a `SubsetFile` JSON matching `web/src/types.ts` / the design spec, plus updates notes in `docs/DATA.md` (neuron ids, export date, scale).
+See `docs/DATA.md`.

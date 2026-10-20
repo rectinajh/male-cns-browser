@@ -45,7 +45,7 @@ def main() -> int:
     print("  # fetch / downsample SWC skeletons")
     print("  # write SubsetFile JSON (meta, neurons, edges, thoughts)")
     print()
-    print("Runtime demo uses the committed synthetic fixture in web/public/data/subset.json.")
+    print("Runtime demo uses the committed real MaleCNS SWC subset (see build_subset.py / docs/DATA.md).")
     print("See docs/DATA.md and https://male-cns.janelia.org/")
     if not args.token:
         print()
