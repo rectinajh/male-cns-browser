@@ -8,6 +8,7 @@ import { useBrowserStore } from "../state/useBrowserStore";
 import { NeuronLines } from "./NeuronLines";
 import { KeyNodes } from "./KeyNodes";
 import { ThoughtPulse } from "./ThoughtPulse";
+import { buildThoughtConductancePath } from "./thoughtPath";
 
 type Props = {
   data: SubsetFile;
@@ -60,8 +61,8 @@ function SceneContent({ data, source }: Props) {
 
   const bounds = useMemo(() => computeBounds(data), [data]);
   const nodeRadius = Math.max(bounds.radius * 0.006, 0.25);
-  // Large enough to read against dense MaleCNS skeletons from orbit distance.
-  const pulseSize = Math.max(bounds.radius * 0.04, 2.2);
+  // Small tip — electrical spark on the wire, not a floating ball.
+  const tipSize = Math.max(bounds.radius * 0.007, 0.28);
 
   const neighborIds = useMemo(() => {
     if (selectedId == null) return new Set<number>();
@@ -73,14 +74,16 @@ function SceneContent({ data, source }: Props) {
     [data.thoughts, thoughtId],
   );
 
+  const segmentPairs = Boolean(data.meta.skeletonFormat?.includes("segment"));
+
   const waypoints = useMemo(() => {
     if (!thought) return [];
-    return thought.waypoints
-      .map((id) => source.getNeuron(id)?.soma)
-      .filter((s): s is [number, number, number] => !!s);
+    const chain = thought.waypoints
+      .map((id) => source.getNeuron(id))
+      .filter((n): n is NonNullable<typeof n> => !!n)
+      .map((n) => ({ soma: n.soma, skeleton: n.skeleton }));
+    return buildThoughtConductancePath(chain);
   }, [thought, source]);
-
-  const segmentPairs = Boolean(data.meta.skeletonFormat?.includes("segment"));
 
   return (
     <>
@@ -101,7 +104,7 @@ function SceneContent({ data, source }: Props) {
         waypoints={waypoints}
         playing={playing}
         color="#3BA7FF"
-        size={pulseSize}
+        tipSize={tipSize}
         onDone={() => setPlaying(false)}
       />
       <OrbitControls
