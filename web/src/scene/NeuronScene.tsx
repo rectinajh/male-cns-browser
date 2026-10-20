@@ -1,6 +1,6 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import type { SubsetFile } from "../types";
 import type { LocalJsonSource } from "../data/LocalJsonSource";
@@ -9,6 +9,7 @@ import { NeuronLines } from "./NeuronLines";
 import { KeyNodes } from "./KeyNodes";
 import { ThoughtPulse } from "./ThoughtPulse";
 import { buildThoughtConductancePath } from "./thoughtPath";
+import { DEFAULT_VIEW_DIR, fitDistance } from "./cameraFrame";
 
 type Props = {
   data: SubsetFile;
@@ -41,16 +42,70 @@ function CameraFramer({
   center: THREE.Vector3;
   radius: number;
 }) {
-  const { camera } = useThree();
+  const { camera, size, controls } = useThree();
   useEffect(() => {
     const cam = camera as THREE.PerspectiveCamera;
+    const aspect = size.width / Math.max(size.height, 1);
+    const dist = fitDistance(radius, cam.fov, aspect, 1.25);
+    const dir = new THREE.Vector3(
+      DEFAULT_VIEW_DIR.x,
+      DEFAULT_VIEW_DIR.y,
+      DEFAULT_VIEW_DIR.z,
+    ).normalize();
     cam.near = Math.max(radius * 0.001, 0.05);
-    cam.far = radius * 40;
-    cam.position.set(center.x + radius * 1.15, center.y + radius * 0.25, center.z + radius * 1.05);
+    cam.far = Math.max(dist * 8, radius * 40);
+    cam.position.copy(center).addScaledVector(dir, dist);
     cam.lookAt(center);
     cam.updateProjectionMatrix();
-  }, [camera, center, radius]);
+    const orbit = controls as (THREE.EventDispatcher & {
+      target: THREE.Vector3;
+      update: () => void;
+    }) | null;
+    if (orbit?.target) {
+      orbit.target.copy(center);
+      orbit.update();
+    }
+  }, [camera, center, radius, size.width, size.height, controls]);
   return null;
+}
+
+/** Gentle orbit; pauses while the user drags, resumes after a short idle. */
+function AutoOrbit({
+  center,
+  radius,
+}: {
+  center: THREE.Vector3;
+  radius: number;
+}) {
+  const [autoRotate, setAutoRotate] = useState(true);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    };
+  }, []);
+
+  return (
+    <OrbitControls
+      makeDefault
+      enableDamping
+      dampingFactor={0.08}
+      autoRotate={autoRotate}
+      autoRotateSpeed={0.55}
+      minDistance={radius * 0.2}
+      maxDistance={radius * 12}
+      target={[center.x, center.y, center.z]}
+      onStart={() => {
+        if (resumeTimer.current) clearTimeout(resumeTimer.current);
+        setAutoRotate(false);
+      }}
+      onEnd={() => {
+        if (resumeTimer.current) clearTimeout(resumeTimer.current);
+        resumeTimer.current = setTimeout(() => setAutoRotate(true), 2500);
+      }}
+    />
+  );
 }
 
 function SceneContent({ data, source }: Props) {
@@ -95,6 +150,7 @@ function SceneContent({ data, source }: Props) {
       <ambientLight intensity={0.5} />
       <directionalLight position={[bounds.radius, bounds.radius, bounds.radius]} intensity={0.95} />
       <directionalLight position={[-bounds.radius, -bounds.radius * 0.4, -bounds.radius]} intensity={0.3} />
+      <AutoOrbit center={bounds.center} radius={bounds.radius} />
       <CameraFramer center={bounds.center} radius={bounds.radius} />
       <NeuronLines
         neurons={data.neurons}
@@ -110,13 +166,6 @@ function SceneContent({ data, source }: Props) {
         color="#3BA7FF"
         tipSize={tipSize}
         onDone={() => setPlaying(false)}
-      />
-      <OrbitControls
-        enableDamping
-        dampingFactor={0.08}
-        minDistance={bounds.radius * 0.15}
-        maxDistance={bounds.radius * 8}
-        target={[bounds.center.x, bounds.center.y, bounds.center.z]}
       />
     </>
   );
