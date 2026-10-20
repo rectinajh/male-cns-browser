@@ -4,6 +4,7 @@ import {
   buildPath,
   buildThoughtConductancePath,
   closestPair,
+  pickRandomThoughtChain,
   pulseDurationSeconds,
   sampleAt,
   uniqueSkeletonPoints,
@@ -34,9 +35,9 @@ describe("thoughtPath", () => {
   });
 
   it("pulseDurationSeconds stays in a visible demo window for long MaleCNS paths", () => {
-    expect(pulseDurationSeconds(123)).toBeGreaterThanOrEqual(1.6);
-    expect(pulseDurationSeconds(123)).toBeLessThanOrEqual(4.2);
-    expect(pulseDurationSeconds(1)).toBeGreaterThanOrEqual(1.6);
+    expect(pulseDurationSeconds(123)).toBeGreaterThanOrEqual(1.5);
+    expect(pulseDurationSeconds(123)).toBeLessThanOrEqual(4.0);
+    expect(pulseDurationSeconds(1)).toBeGreaterThanOrEqual(1.5);
   });
 
   it("advanceProgress reaches 1 in roughly durationSec and clamps huge dt", () => {
@@ -123,4 +124,44 @@ describe("thoughtPath", () => {
     const { total } = buildPath(path);
     expect(total).toBeGreaterThan(10);
   });
+
+  it("pickRandomThoughtChain follows edges, varies by seed, and stays in length bounds", () => {
+    const edges = [
+      { from: 1, to: 2, weight: 10 },
+      { from: 2, to: 3, weight: 10 },
+      { from: 3, to: 4, weight: 10 },
+      { from: 4, to: 5, weight: 10 },
+      { from: 1, to: 5, weight: 1 },
+      { from: 2, to: 5, weight: 1 },
+      { from: 5, to: 3, weight: 5 },
+      { from: 3, to: 1, weight: 2 },
+    ];
+
+    const seqA = [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+    let i = 0;
+    const rngA = () => seqA[i++ % seqA.length];
+    const pathA = pickRandomThoughtChain(edges, { minLen: 3, maxLen: 5, rng: rngA });
+    expect(pathA.length).toBeGreaterThanOrEqual(3);
+    expect(pathA.length).toBeLessThanOrEqual(5);
+    expect(new Set(pathA).size).toBe(pathA.length);
+
+    for (let k = 0; k < pathA.length - 1; k++) {
+      const hop = edges.some((e) => e.from === pathA[k] && e.to === pathA[k + 1]);
+      expect(hop).toBe(true);
+    }
+
+    const seqB = [0.99, 0.85, 0.7, 0.55, 0.4, 0.25, 0.1, 0.05, 0.15, 0.35];
+    let j = 0;
+    const rngB = () => seqB[j++ % seqB.length];
+    const pathB = pickRandomThoughtChain(edges, { minLen: 3, maxLen: 5, rng: rngB });
+    expect(pathB.length).toBeGreaterThanOrEqual(3);
+    // Different RNG streams should usually yield different routes.
+    expect(pathA.join(",")).not.toBe(pathB.join(","));
+  });
+
+  it("pickRandomThoughtChain returns empty when there are no usable edges", () => {
+    expect(pickRandomThoughtChain([])).toEqual([]);
+    expect(pickRandomThoughtChain([{ from: 1, to: 1, weight: 9 }])).toEqual([]);
+  });
+
 });

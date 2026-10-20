@@ -36,8 +36,8 @@ export function sampleAt(points: THREE.Vector3[], total: number, t: number): THR
  * snappy so the #3BA7FF pulse is readable in a demo (not proportional forever).
  */
 export function pulseDurationSeconds(pathLength: number, speed = 1): number {
-  const base = Math.max(pathLength * 0.012, 1.8);
-  return THREE.MathUtils.clamp(base / Math.max(speed, 0.05), 1.6, 4.2);
+  const base = Math.max(pathLength * 0.012, 1.6);
+  return THREE.MathUtils.clamp(base / Math.max(speed, 0.05), 1.5, 4.0);
 }
 
 /** Advance normalized progress; clamps huge dt (tab background) so one frame can't skip the whole flash. */
@@ -205,4 +205,78 @@ export function buildThoughtConductancePath(chain: PathNeuron[]): Vec3[] {
   }
 
   return out.length >= 2 ? out : chain.map((n) => n.soma);
+}
+
+export type EdgeLike = { from: number; to: number; weight: number };
+
+export type RandomThoughtOptions = {
+  /** Inclusive min neuron count in the chain (default 3). */
+  minLen?: number;
+  /** Inclusive max neuron count in the chain (default 6). */
+  maxLen?: number;
+  /** Attempts to find a long-enough walk before accepting a shorter one. */
+  attempts?: number;
+  /** RNG in [0, 1); inject for tests. */
+  rng?: () => number;
+};
+
+function weightedPick<T extends { weight: number }>(items: T[], rng: () => number): T {
+  const total = items.reduce((s, x) => s + Math.max(x.weight, 0), 0);
+  if (total <= 0) return items[Math.floor(rng() * items.length)];
+  let r = rng() * total;
+  for (const item of items) {
+    r -= Math.max(item.weight, 0);
+    if (r <= 0) return item;
+  }
+  return items[items.length - 1];
+}
+
+/**
+ * Pick a fresh random directed walk on the connectome edges so each
+ * 「思考一次」 can flash a different route / direction.
+ * Prefers stronger synapses (weight-biased), never revisits a neuron.
+ */
+export function pickRandomThoughtChain(
+  edges: EdgeLike[],
+  opts?: RandomThoughtOptions,
+): number[] {
+  const rng = opts?.rng ?? Math.random;
+  const minLen = Math.max(2, opts?.minLen ?? 3);
+  const maxLen = Math.max(minLen, opts?.maxLen ?? 6);
+  const attempts = opts?.attempts ?? 32;
+
+  const adj = new Map<number, { to: number; weight: number }[]>();
+  for (const e of edges) {
+    if (e.from === e.to) continue;
+    const list = adj.get(e.from) ?? [];
+    list.push({ to: e.to, weight: e.weight });
+    adj.set(e.from, list);
+  }
+
+  const starts = [...adj.keys()];
+  if (starts.length === 0) return [];
+
+  let best: number[] = [];
+
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const targetLen = minLen + Math.floor(rng() * (maxLen - minLen + 1));
+    const start = starts[Math.floor(rng() * starts.length)];
+    const path = [start];
+    const used = new Set<number>([start]);
+    let cur = start;
+
+    while (path.length < targetLen) {
+      const outs = (adj.get(cur) ?? []).filter((x) => !used.has(x.to));
+      if (outs.length === 0) break;
+      const next = weightedPick(outs, rng).to;
+      path.push(next);
+      used.add(next);
+      cur = next;
+    }
+
+    if (path.length > best.length) best = path;
+    if (path.length >= minLen) return path;
+  }
+
+  return best.length >= 2 ? best : [];
 }

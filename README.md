@@ -1,6 +1,6 @@
 # Male CNS Browser
 
-Open-source **3D fruit-fly CNS neuron browser** for exploring a MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” pulse along preset decision paths.
+Open-source **3D fruit-fly CNS neuron browser** for exploring a MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” pulse along a fresh random connectome walk each click.
 
 > Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required).
 
@@ -23,7 +23,7 @@ npm run build
 
 - Orbit a dark-background 3D scene of **real MaleCNS skeletons** (rainbow by type)
 - Click key nodes (somas) to see id / type / side and neighbors
-- Choose a thought path and press **思考一次** for a `#3BA7FF` pulse along waypoints
+- Press **思考一次** for a `#3BA7FF` pulse along a **random** edge walk (new route each click)
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; neuPrint reserved for later
 
 ## Data & attribution

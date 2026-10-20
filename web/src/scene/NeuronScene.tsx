@@ -56,6 +56,7 @@ function CameraFramer({
 function SceneContent({ data, source }: Props) {
   const selectedId = useBrowserStore((s) => s.selectedId);
   const thoughtId = useBrowserStore((s) => s.thoughtId);
+  const activeChain = useBrowserStore((s) => s.activeChain);
   const playing = useBrowserStore((s) => s.playing);
   const setPlaying = useBrowserStore((s) => s.setPlaying);
 
@@ -77,13 +78,16 @@ function SceneContent({ data, source }: Props) {
   const segmentPairs = Boolean(data.meta.skeletonFormat?.includes("segment"));
 
   const waypoints = useMemo(() => {
-    if (!thought) return [];
-    const chain = thought.waypoints
+    const ids =
+      activeChain && activeChain.length >= 2
+        ? activeChain
+        : (thought?.waypoints ?? []);
+    const chain = ids
       .map((id) => source.getNeuron(id))
       .filter((n): n is NonNullable<typeof n> => !!n)
       .map((n) => ({ soma: n.soma, skeleton: n.skeleton }));
     return buildThoughtConductancePath(chain);
-  }, [thought, source]);
+  }, [activeChain, thought, source]);
 
   return (
     <>

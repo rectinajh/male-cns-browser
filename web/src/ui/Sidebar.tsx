@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import type { LocalJsonSource } from "../data/LocalJsonSource";
 import type { SubsetFile } from "../types";
 import { useBrowserStore } from "../state/useBrowserStore";
+import { pickRandomThoughtChain } from "../scene/thoughtPath";
 import { NeuronDetails } from "./NeuronDetails";
 import { ThoughtControls } from "./ThoughtControls";
 
@@ -13,10 +14,10 @@ type Props = {
 export function Sidebar({ data, source }: Props) {
   const [query, setQuery] = useState("");
   const selectedId = useBrowserStore((s) => s.selectedId);
-  const thoughtId = useBrowserStore((s) => s.thoughtId);
   const playing = useBrowserStore((s) => s.playing);
+  const activeChain = useBrowserStore((s) => s.activeChain);
   const setSelectedId = useBrowserStore((s) => s.setSelectedId);
-  const setThoughtId = useBrowserStore((s) => s.setThoughtId);
+  const setActiveChain = useBrowserStore((s) => s.setActiveChain);
   const setPlaying = useBrowserStore((s) => s.setPlaying);
 
   const filtered = useMemo(() => {
@@ -33,8 +34,6 @@ export function Sidebar({ data, source }: Props) {
 
   const selected = selectedId != null ? source.getNeuron(selectedId) ?? null : null;
   const neighbors = selectedId != null ? source.neighbors(selectedId) : [];
-
-  const activeThoughtId = thoughtId ?? data.thoughts[0]?.id ?? null;
 
   return (
     <aside className="sidebar">
@@ -82,15 +81,15 @@ export function Sidebar({ data, source }: Props) {
 
       <section>
         <ThoughtControls
-          thoughts={data.thoughts}
-          thoughtId={activeThoughtId}
           playing={playing}
-          onSelectThought={(id) => {
-            setThoughtId(id);
-          }}
+          lastChain={activeChain}
           onThink={() => {
-            if (!activeThoughtId) return;
-            setThoughtId(activeThoughtId);
+            const chain = pickRandomThoughtChain(data.edges, {
+              minLen: 3,
+              maxLen: 6,
+            });
+            if (chain.length < 2) return;
+            setActiveChain(chain);
             setPlaying(true);
           }}
         />
