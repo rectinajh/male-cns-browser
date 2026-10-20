@@ -32,6 +32,20 @@ npm run build
 - **MaleCNS data:** CC-BY — [FlyEM / HHMI Janelia Male CNS](https://male-cns.janelia.org/) (`male-cns:v1.0`)
 - Committed `web/public/data/subset.json` is a curated **real SWC** subset (~300 neurons) from public GCS. Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.py); see [`docs/DATA.md`](./docs/DATA.md).
 
+## Reference images (local)
+
+The right-hand panel expects two Janelia reference renders under `web/public/reference/` (not committed — ~12MB each):
+
+```bash
+mkdir -p web/public/reference
+cp dimorphic-brain-only.png \
+  web/public/reference/dimorphic-brain-only.png
+cp mcns-median-size-per-type-40-0626-3840x2160-white.png \
+  web/public/reference/mcns-median-size-per-type-40-0626-3840x2160-white.png
+```
+
+Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
+
 ## Docs
 
 - Design: [`docs/superpowers/specs/2026-10-20-male-cns-browser-design.md`](./docs/superpowers/specs/2026-10-20-male-cns-browser-design.md)

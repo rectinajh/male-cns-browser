@@ -6,6 +6,7 @@ web/node_modules/
 web/dist/
 web/coverage/
 
-# local reference renders
+# local reference renders (repo root + public copies ~12MB each)
 *.png
 !web/public/**/*.png
+web/public/reference/**

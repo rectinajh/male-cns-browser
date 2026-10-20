@@ -3,6 +3,7 @@ import type { SubsetFile } from "./types";
 import { LocalJsonSource } from "./data/LocalJsonSource";
 import { NeuronScene } from "./scene/NeuronScene";
 import { Sidebar } from "./ui/Sidebar";
+import { ReferencePanel } from "./ui/ReferencePanel";
 import { useBrowserStore } from "./state/useBrowserStore";
 import "./styles.css";
 
@@ -55,6 +56,7 @@ export default function App() {
       <div className="viewport">
         <NeuronScene data={data} source={source} />
       </div>
+      <ReferencePanel />
     </div>
   );
 }
