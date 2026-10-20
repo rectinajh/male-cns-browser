@@ -35,7 +35,7 @@ export default function App() {
     return (
       <div className="error">
         <div>
-          <h1>Failed to load subset</h1>
+          <h1>子集加载失败</h1>
           <p>{error}</p>
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function App() {
   if (!data) {
     return (
       <div className="loading">
-        <p>Loading Male CNS subset…</p>
+        <p>正在加载雄性 CNS 子集…</p>
       </div>
     );
   }

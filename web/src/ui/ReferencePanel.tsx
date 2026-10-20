@@ -1,19 +1,19 @@
 const REFERENCES = [
   {
     src: "/reference/dimorphic-brain-only.png",
-    caption: "Dimorphic brain",
-    alt: "Male CNS dimorphic brain reference render",
+    caption: "二型脑参考图",
+    alt: "雄性 CNS 二型脑参考渲染",
   },
   {
     src: "/reference/mcns-median-size-per-type-40-0626-3840x2160.png",
-    caption: "Median size per type",
-    alt: "Male CNS median size per type reference render",
+    caption: "各类型中位尺寸",
+    alt: "雄性 CNS 各类型中位尺寸参考渲染",
   },
 ] as const;
 
 export function ReferencePanel() {
   return (
-    <aside className="reference-panel" aria-label="Reference renders">
+    <aside className="reference-panel" aria-label="参考渲染图">
       {REFERENCES.map((item) => (
         <figure key={item.src} className="reference-figure">
           <div className="reference-media">

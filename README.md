@@ -21,9 +21,11 @@ npm run build
 
 ## Features (v0.1)
 
+- 界面文案为**中文**（侧栏 / 按钮 / 说明 / 参考图标题）
 - Orbit a dark-background 3D scene of **real MaleCNS SWC skeletons** (rainbow by type), auto-fitted and slowly auto-rotating
 - Click key nodes (somas) to see id / type / side and neighbors
 - Press **思考一次** for a random edge walk: **blue lightning** (`#3BA7FF` / `#5B9FFF`) crackles along real arbors (jagged bolt, flicker, tip branches), somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
+- **Kimi 查询**：选中神经元后可提问类型含义 / 功能科普；密钥经本地 Vite `/api/kimi` 代理，**不会**进浏览器（见下）
 - Right-hand panel: Janelia reference renders (local copies; see below)
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; optional neuPrint enrich via `scripts/prepare/enrich_neuprint.py`
 
@@ -45,7 +47,7 @@ Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.
 
 - **Code:** MIT (see [`LICENSE`](./LICENSE))
 - **MaleCNS data:** CC-BY — [FlyEM / HHMI Janelia Male CNS](https://male-cns.janelia.org/) (`male-cns:v1.0`)
-- Do **not** commit neuPrint tokens, full synapse tables, or large reference PNGs
+- Do **not** commit neuPrint / Kimi tokens, `web/.env.local`, `kimi.env`, full synapse tables, or large reference PNGs
 
 ## Reference images (local)
 
@@ -60,6 +62,19 @@ cp mcns-median-size-per-type-40-0626-3840x2160.png \
 ```
 
 Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
+
+
+## Kimi 神经元解释（本地）
+
+浏览器里「Kimi 查询」会把问题 + 当前神经元上下文（id / name / type / side）POST 到本地 Vite 中间件 `POST /api/kimi`，由服务端读取密钥再转调 Moonshot Chat Completions。**API Key 不会下发到前端。**
+
+1. 复制 [`.env.example`](./.env.example) 里的变量到：
+   - `~/.config/male-cns-browser/kimi.env`（推荐，`chmod 600`），或
+   - `web/.env.local`（已被 `*.local` gitignore）
+2. 填入 `KIMI_API_KEY` / `KIMI_BASE_URL` / `KIMI_MODEL`（默认 `https://api.moonshot.cn/v1` + `moonshot-v1-8k`）
+3. `cd web && npm run dev` 后在侧栏提问
+
+切勿把真实 Key 提交进 Git / README / Issue。
 
 ## Docs
 

@@ -265,6 +265,69 @@ a {
   text-align: center;
 }
 
+
+.kimi-ask {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.kimi-input {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #243650;
+  background: #0a1220;
+  color: inherit;
+  resize: vertical;
+  min-height: 4.5rem;
+  font: inherit;
+}
+
+.kimi-btn {
+  align-self: flex-start;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid #3ba7ff66;
+  border-radius: 8px;
+  background: #12304a;
+  color: #cfe8ff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.kimi-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.kimi-error {
+  margin: 0;
+  color: #ff8f8f;
+  font-size: 0.85rem;
+}
+
+.kimi-answer {
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #1c2a3d;
+  background: #0a1220;
+}
+
+.kimi-answer h4 {
+  margin: 0 0 0.4rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9eb6d4;
+}
+
+.kimi-answer p {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
 @media (max-width: 1100px) {
   .app {
     grid-template-columns: minmax(240px, 300px) 1fr minmax(180px, 240px);

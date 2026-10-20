@@ -10,3 +10,11 @@ web/coverage/
 *.png
 !web/public/**/*.png
 web/public/reference/**
+
+# secrets / local env (never commit)
+.env
+.env.*
+!.env.example
+**/.env.local
+**/kimi.env
+.neuprint.token

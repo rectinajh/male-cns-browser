@@ -5,6 +5,7 @@ import { useBrowserStore } from "../state/useBrowserStore";
 import { pickRandomThoughtChain } from "../scene/thoughtPath";
 import { NeuronDetails } from "./NeuronDetails";
 import { ThoughtControls } from "./ThoughtControls";
+import { KimiAsk } from "./KimiAsk";
 
 type Props = {
   data: SubsetFile;
@@ -38,9 +39,10 @@ export function Sidebar({ data, source }: Props) {
   return (
     <aside className="sidebar">
       <header className="sidebar-header">
-        <h1>Male CNS Browser</h1>
+        <h1>雄性 CNS 浏览器</h1>
         <p className="muted">
-          {data.meta.neuronCount} real SWC neurons · {data.edges.length} edges · {data.meta.dataset}
+          {data.meta.neuronCount} 个真实 SWC 神经元 · {data.edges.length} 条边 ·{" "}
+          {data.meta.dataset}
         </p>
         {data.meta.subsetNote ? (
           <p className="muted" style={{ fontSize: "0.75rem", marginTop: 4 }}>
@@ -50,11 +52,11 @@ export function Sidebar({ data, source }: Props) {
       </header>
 
       <section>
-        <h3>Neuron browser</h3>
+        <h3>神经元浏览</h3>
         <input
           className="search"
           type="search"
-          placeholder="Search id / name / type…"
+          placeholder="搜索 id / 名称 / 类型…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -85,6 +87,10 @@ export function Sidebar({ data, source }: Props) {
       </section>
 
       <section>
+        <KimiAsk neuron={selected ?? null} />
+      </section>
+
+      <section>
         <ThoughtControls
           playing={playing}
           lastChain={activeChain}
@@ -101,11 +107,11 @@ export function Sidebar({ data, source }: Props) {
       </section>
 
       <footer className="sidebar-footer muted">
-        Real MaleCNS v1.0 SWC (dense curated subset, not full CNS) ·{" "}
+        真实 MaleCNS v1.0 SWC（稠密精选集，非全脑）·{" "}
         <a href="https://male-cns.janelia.org/" target="_blank" rel="noreferrer">
           MaleCNS
         </a>{" "}
-        (CC-BY FlyEM / HHMI Janelia).
+        （CC-BY FlyEM / HHMI Janelia）。
       </footer>
     </aside>
   );

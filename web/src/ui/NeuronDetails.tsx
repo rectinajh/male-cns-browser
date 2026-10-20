@@ -9,27 +9,29 @@ type Props = {
 
 export function NeuronDetails({ neuron, neighbors, onSelectNeighbor }: Props) {
   if (!neuron) {
-    return <p className="muted">Click a key node or pick a neuron from the list.</p>;
+    return (
+      <p className="muted">点击关键节点，或从列表中选择一个神经元。</p>
+    );
   }
 
   return (
     <div className="details">
       <h3>{neuron.name}</h3>
       <dl>
-        <dt>ID</dt>
+        <dt>编号</dt>
         <dd>{neuron.id}</dd>
-        <dt>Type</dt>
+        <dt>类型</dt>
         <dd>{neuron.type}</dd>
-        <dt>Side</dt>
+        <dt>侧别</dt>
         <dd>{neuron.side}</dd>
-        <dt>Soma</dt>
+        <dt>胞体</dt>
         <dd>
           [{neuron.soma.map((v) => v.toFixed(2)).join(", ")}]
         </dd>
       </dl>
-      <h4>Neighbors ({neighbors.length})</h4>
+      <h4>邻居（{neighbors.length}）</h4>
       {neighbors.length === 0 ? (
-        <p className="muted">No neighbors in subset.</p>
+        <p className="muted">当前子集中无邻居。</p>
       ) : (
         <ul className="neighbor-list">
           {neighbors.map((n) => (
@@ -38,9 +40,9 @@ export function NeuronDetails({ neuron, neighbors, onSelectNeighbor }: Props) {
                 <span className="dir">{n.direction === "out" ? "→" : "←"}</span>
                 <span>
                   {n.neuron.name}{" "}
-                  <span className="muted">({n.neuron.type})</span>
+                  <span className="muted">（{n.neuron.type}）</span>
                 </span>
-                <span className="weight">w={n.weight}</span>
+                <span className="weight">权重={n.weight}</span>
               </button>
             </li>
           ))}
