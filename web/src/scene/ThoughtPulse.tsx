@@ -8,6 +8,8 @@ type Props = {
   playing: boolean;
   color?: string;
   speed?: number;
+  /** World-unit size for the pulse head (scales with scene extent). */
+  size?: number;
   onDone?: () => void;
 };
 
@@ -38,10 +40,12 @@ export function ThoughtPulse({
   waypoints,
   playing,
   color = "#3BA7FF",
-  speed = 0.35,
+  speed = 0.45,
+  size = 0.8,
   onDone,
 }: Props) {
   const head = useRef<THREE.Mesh>(null);
+  const light = useRef<THREE.PointLight>(null);
   const trailRefs = useRef<(THREE.Mesh | null)[]>([]);
   const progress = useRef(0);
   const doneRef = useRef(false);
@@ -49,7 +53,7 @@ export function ThoughtPulse({
   onDoneRef.current = onDone;
 
   const { points, total } = useMemo(() => buildPath(waypoints), [waypoints]);
-  const trailCount = 8;
+  const trailCount = 10;
 
   useEffect(() => {
     if (playing) {
@@ -60,7 +64,7 @@ export function ThoughtPulse({
 
   useFrame((_, dt) => {
     if (!playing || waypoints.length < 2) return;
-    progress.current += (dt * speed) / Math.max(total * 0.15, 0.2);
+    progress.current += (dt * speed) / Math.max(total * 0.12, 0.35);
     if (progress.current >= 1) {
       progress.current = 1;
       if (!doneRef.current) {
@@ -70,15 +74,16 @@ export function ThoughtPulse({
     }
     const pos = sampleAt(points, total, progress.current);
     if (head.current) head.current.position.copy(pos);
+    if (light.current) light.current.position.copy(pos);
 
     for (let i = 0; i < trailCount; i++) {
       const mesh = trailRefs.current[i];
       if (!mesh) continue;
-      const tt = Math.max(0, progress.current - (i + 1) * 0.035);
+      const tt = Math.max(0, progress.current - (i + 1) * 0.028);
       const p = sampleAt(points, total, tt);
       mesh.position.copy(p);
       const mat = mesh.material as THREE.MeshBasicMaterial;
-      mat.opacity = Math.max(0, 0.55 - i * 0.06) * (playing ? 1 : 0);
+      mat.opacity = Math.max(0, 0.6 - i * 0.05) * (playing ? 1 : 0);
     }
   });
 
@@ -87,7 +92,7 @@ export function ThoughtPulse({
   return (
     <group>
       <mesh ref={head}>
-        <sphereGeometry args={[0.05, 16, 16]} />
+        <sphereGeometry args={[size, 16, 16]} />
         <meshBasicMaterial color={color} transparent opacity={1} />
       </mesh>
       {Array.from({ length: trailCount }, (_, i) => (
@@ -96,13 +101,13 @@ export function ThoughtPulse({
           ref={(el) => {
             trailRefs.current[i] = el;
           }}
-          scale={1 - i * 0.08}
+          scale={1 - i * 0.07}
         >
-          <sphereGeometry args={[0.035, 12, 12]} />
+          <sphereGeometry args={[size * 0.7, 12, 12]} />
           <meshBasicMaterial color={color} transparent opacity={0.4} depthWrite={false} />
         </mesh>
       ))}
-      <pointLight color={color} intensity={2.5} distance={1.2} />
+      <pointLight ref={light} color={color} intensity={4} distance={size * 25} />
     </group>
   );
 }

@@ -1,37 +1,62 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 import type { Edge, Neuron } from "../types";
+import { colorForType, dimColor } from "./colorForType";
 
 type Props = {
   neurons: Neuron[];
   edges: Edge[];
   selectedId: number | null;
   neighborIds: Set<number>;
+  /** skeleton is interleaved segment pairs when true (MaleCNS export). */
+  segmentPairs?: boolean;
 };
 
-export function NeuronLines({ neurons, edges, selectedId, neighborIds }: Props) {
+export function NeuronLines({
+  neurons,
+  edges,
+  selectedId,
+  neighborIds,
+  segmentPairs = true,
+}: Props) {
   const { positions, colors } = useMemo(() => {
     const pos: number[] = [];
     const col: number[] = [];
-    const dim = new THREE.Color("#4a6280");
-    const bright = new THREE.Color("#9ed0ff");
-    const mid = new THREE.Color("#6a90b8");
 
     for (const n of neurons) {
+      const base = colorForType(n.type);
       const isSel = n.id === selectedId;
       const isN = neighborIds.has(n.id);
-      const c = isSel ? bright : isN ? mid : dim;
+      let c: THREE.Color;
+      if (isSel) {
+        c = base.clone().lerp(new THREE.Color("#ffffff"), 0.35);
+        c.offsetHSL(0, 0.05, 0.12);
+      } else if (isN) {
+        c = base.clone().offsetHSL(0, 0, 0.05);
+      } else if (selectedId != null) {
+        c = dimColor(base, 0.62);
+      } else {
+        c = base;
+      }
+
       const sk = n.skeleton;
-      for (let i = 0; i < sk.length - 1; i++) {
-        pos.push(sk[i][0], sk[i][1], sk[i][2], sk[i + 1][0], sk[i + 1][1], sk[i + 1][2]);
-        col.push(c.r, c.g, c.b, c.r, c.g, c.b);
+      if (segmentPairs) {
+        for (let i = 0; i + 1 < sk.length; i += 2) {
+          pos.push(sk[i][0], sk[i][1], sk[i][2], sk[i + 1][0], sk[i + 1][1], sk[i + 1][2]);
+          col.push(c.r, c.g, c.b, c.r, c.g, c.b);
+        }
+      } else {
+        for (let i = 0; i < sk.length - 1; i++) {
+          pos.push(sk[i][0], sk[i][1], sk[i][2], sk[i + 1][0], sk[i + 1][1], sk[i + 1][2]);
+          col.push(c.r, c.g, c.b, c.r, c.g, c.b);
+        }
       }
     }
     return {
       positions: new Float32Array(pos),
       colors: new Float32Array(col),
     };
-  }, [neurons, selectedId, neighborIds]);
+  }, [neurons, selectedId, neighborIds, segmentPairs]);
 
   const neighborEdgeGeo = useMemo(() => {
     if (selectedId == null) return null;
@@ -63,11 +88,11 @@ export function NeuronLines({ neurons, edges, selectedId, neighborIds }: Props) 
   return (
     <group>
       <lineSegments geometry={lineGeo}>
-        <lineBasicMaterial vertexColors transparent opacity={0.85} />
+        <lineBasicMaterial vertexColors transparent opacity={0.88} />
       </lineSegments>
       {neighborEdgeGeo && (
         <lineSegments geometry={neighborEdgeGeo}>
-          <lineBasicMaterial color="#7ec8ff" transparent opacity={0.95} linewidth={2} />
+          <lineBasicMaterial color="#7ec8ff" transparent opacity={0.95} />
         </lineSegments>
       )}
     </group>
