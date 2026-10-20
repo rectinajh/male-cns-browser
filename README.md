@@ -1,8 +1,8 @@
 # Male CNS Browser
 
-Open-source **3D fruit-fly CNS neuron browser** for exploring a MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” pulse along a fresh random connectome walk each click.
+Open-source **3D fruit-fly CNS neuron browser** for exploring a dense MaleCNS-shaped connectome subset, inspecting key nodes, and playing a cyan-white “think once” charge pulse along a fresh random connectome walk each click.
 
-> Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required).
+> Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required at runtime).
 
 ## Quick start
 
@@ -21,16 +21,31 @@ npm run build
 
 ## Features (v0.1)
 
-- Orbit a dark-background 3D scene of **real MaleCNS skeletons** (rainbow by type)
+- Orbit a dark-background 3D scene of **real MaleCNS SWC skeletons** (rainbow by type), auto-fitted and slowly auto-rotating
 - Click key nodes (somas) to see id / type / side and neighbors
-- Press **思考一次** for a `#3BA7FF` pulse along a **random** edge walk (new route each click)
-- `ConnectomeSource` abstraction with `LocalJsonSource` today; neuPrint reserved for later
+- Press **思考一次** for a random edge walk: **cyan-white charge packets** (`#E8FFFF`) race along real arbors, somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
+- Right-hand panel: Janelia reference renders (local copies; see below)
+- `ConnectomeSource` abstraction with `LocalJsonSource` today; optional neuPrint enrich via `scripts/prepare/enrich_neuprint.py`
+
+## Shipped subset (current)
+
+Committed `web/public/data/subset.json` meta (exported 2026-10-20):
+
+| | |
+| --- | --- |
+| Dataset | `male-cns:v1.0` |
+| Neurons | **1136** real SWC bodies (dense curated optic / DN / AN / CX / MB / VNC / hubs) |
+| Edges | **5000** (neuPrint `male-cns:v1.0` adjacencies) |
+| Skeleton | interleaved segment endpoint pairs, ~320 points per neuron after downsample |
+| Scope | **not** the full MaleCNS (~140k CNS neurons) — sized for browser WebGL |
+
+Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.py); optionally enrich edges with [`scripts/prepare/enrich_neuprint.py`](./scripts/prepare/enrich_neuprint.py). Details: [`docs/DATA.md`](./docs/DATA.md).
 
 ## Data & attribution
 
 - **Code:** MIT (see [`LICENSE`](./LICENSE))
 - **MaleCNS data:** CC-BY — [FlyEM / HHMI Janelia Male CNS](https://male-cns.janelia.org/) (`male-cns:v1.0`)
-- Committed `web/public/data/subset.json` is a curated **real SWC** subset (~300 neurons) from public GCS. Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.py); see [`docs/DATA.md`](./docs/DATA.md).
+- Do **not** commit neuPrint tokens, full synapse tables, or large reference PNGs
 
 ## Reference images (local)
 
@@ -56,10 +71,10 @@ Vite serves them at `/reference/...`. Without the copies the panel frames stay e
 
 ```text
 web/                 Vite + React + R3F app
-scripts/prepare/     neuPrint export stub (token optional)
+scripts/prepare/     SWC subset builder + optional neuPrint enrich
 docs/                Design, plan, data notes
 ```
 
 ## Non-goals (v0.1)
 
-Full ~166k-neuron load, EM volumes, Hodgkin–Huxley / detailed spiking, or coupling to other products.
+Full ~140k-neuron load, EM volumes, Hodgkin–Huxley / detailed spiking, or coupling to other products.
