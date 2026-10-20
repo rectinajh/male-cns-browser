@@ -6,6 +6,7 @@ export type Neuron = {
   type: string;
   side: "L" | "R" | "C" | string;
   soma: Vec3;
+  /** Either a polyline or interleaved segment endpoint pairs (see meta.skeletonFormat). */
   skeleton: Vec3[];
 };
 
@@ -23,6 +24,18 @@ export type SubsetMeta = {
   license: string;
   neuronCount: number;
   exportedAt: string;
+  edgeCount?: number;
+  skeletonFormat?: string;
+  scale?: {
+    scale: number;
+    centroid_voxel?: number[];
+    flip_y?: boolean;
+    swap_yz?: boolean;
+    long_axis?: number;
+    voxel_nm?: number;
+    note?: string;
+  };
+  swcUrlTemplate?: string;
 };
 
 export type SubsetFile = {

@@ -97,11 +97,11 @@ export function Sidebar({ data, source }: Props) {
       </section>
 
       <footer className="sidebar-footer muted">
-        Data schema inspired by{" "}
+        Real MaleCNS v1.0 SWC subset ·{" "}
         <a href="https://male-cns.janelia.org/" target="_blank" rel="noreferrer">
           MaleCNS
         </a>{" "}
-        (CC-BY). Demo fixture is synthetic.
+        (CC-BY FlyEM / HHMI Janelia).
       </footer>
     </aside>
   );
