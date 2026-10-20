@@ -47,9 +47,9 @@ WEIGHTS_URL = (
 
 # Display scale: voxel * SCALE → scene units (~[-50, 50] after centering)
 SCALE = 0.001
-MAX_SKELETON_POINTS = 200  # as interleaved segment endpoints (pairs)
-TARGET_NEURONS = 300
-MAX_EDGES = 2500
+MAX_SKELETON_POINTS = 320  # denser real MaleCNS arbors (interleaved pairs)
+TARGET_NEURONS = 1200
+MAX_EDGES = 10000
 RNG = random.Random(42)
 
 
@@ -131,31 +131,31 @@ def curate_body_ids(df) -> list[int]:
     for t in optic_types:
         sub = df[df["type_str"] == t]
         for side in ("L", "R"):
-            add(sample_group(sub[sub["side"] == side], 3), f"optic {t}_{side}")
+            add(sample_group(sub[sub["side"] == side], 8), f"optic {t}_{side}")
 
     # visual projection (e.g. LC-like)
     vp = df[df["superclass"] == "visual_projection"]
     for side in ("L", "R"):
-        add(sample_group(vp[vp["side"] == side], 12), f"visual_projection_{side}")
+        add(sample_group(vp[vp["side"] == side], 40), f"visual_projection_{side}")
 
     # Descending neurons
     dn = df[
         (df["superclass"] == "descending_neuron")
         | (df["type_str"].str.startswith("DN", na=False))
     ]
-    add(sample_group(dn, 45), "descending")
+    add(sample_group(dn, 160), "descending")
 
     # Ascending (neck bridge)
     an = df[df["superclass"] == "ascending_neuron"]
-    add(sample_group(an, 20), "ascending")
+    add(sample_group(an, 70), "ascending")
 
     # Central complex / Kenyon / MB
     cx = df[df["class_str"].isin(["CX", "Kenyon_Cell", "MBON", "DAN", "ALPN"])]
     # Prefer named CX types
     for tpat in ["EPG", "PEG", "PEN", "FB", "MBON", "KC"]:
         sub = df[df["type_str"].str.contains(tpat, na=False, regex=False)]
-        add(sample_group(sub, 8 if tpat != "KC" else 15), f"CX/MB {tpat}")
-    add(sample_group(cx, 25), "CX/MB class")
+        add(sample_group(sub, 24 if tpat != "KC" else 50), f"CX/MB {tpat}")
+    add(sample_group(cx, 80), "CX/MB class")
 
     # VNC-ish
     vnc = df[
@@ -164,11 +164,11 @@ def curate_body_ids(df) -> list[int]:
         | df["exitNerve"].notna()
         | (df["superclass"].str.startswith("vnc_", na=False))
     ]
-    add(sample_group(vnc, 70), "VNC")
+    add(sample_group(vnc, 280), "VNC")
 
     # cb_intrinsic hubs (central brain)
     cb = df[df["superclass"] == "cb_intrinsic"]
-    add(sample_group(cb, 30), "cb_intrinsic")
+    add(sample_group(cb, 100), "cb_intrinsic")
 
     # Trim / pad toward TARGET
     if len(selected) > TARGET_NEURONS + 40:
@@ -302,39 +302,44 @@ def skeleton_segments(nodes, max_points=MAX_SKELETON_POINTS):
 
 
 def filter_edges(selected: set[int], max_edges=MAX_EDGES):
-    print("loading weights table…")
-    table = feather.read_table(WEIGHTS_PATH, columns=["body_pre", "body_post", "weight"])
-    pre = table.column("body_pre").to_numpy()
-    post = table.column("body_post").to_numpy()
-    w = table.column("weight").to_numpy()
-    print(f"  {len(pre):,} total edges")
+    """Memory-friendly: stream feather in batches; keep top-weight within-subset edges."""
+    import heapq
+    import pyarrow.dataset as ds
 
-    # boolean mask — selected is small, use np.isin
-    sel = np.fromiter(selected, dtype=np.int64)
-    mask = np.isin(pre, sel) & np.isin(post, sel)
-    pre_f = pre[mask]
-    post_f = post[mask]
-    w_f = w[mask]
-    print(f"  {len(pre_f):,} edges within subset")
-
-    if len(w_f) == 0:
-        return []
-
-    # top by weight
-    if len(w_f) > max_edges:
-        idx = np.argpartition(-w_f, max_edges)[:max_edges]
-        idx = idx[np.argsort(-w_f[idx])]
-        pre_f, post_f, w_f = pre_f[idx], post_f[idx], w_f[idx]
-    else:
-        order = np.argsort(-w_f)
-        pre_f, post_f, w_f = pre_f[order], post_f[order], w_f[order]
-
+    print("scanning weights table in batches…")
+    sel_arr = np.fromiter((int(x) for x in selected), dtype=np.int64)
+    heap: list[tuple[int, int, int]] = []  # (weight, pre, post) min-heap
+    total = 0
+    kept_scan = 0
+    dataset = ds.dataset(WEIGHTS_PATH, format="feather")
+    for batch in dataset.to_batches(columns=["body_pre", "body_post", "weight"], batch_size=1_000_000):
+        pre = batch.column(0).to_numpy()
+        post = batch.column(1).to_numpy()
+        w = batch.column(2).to_numpy()
+        total += len(pre)
+        mask = np.isin(pre, sel_arr) & np.isin(post, sel_arr) & (pre != post)
+        if not mask.any():
+            continue
+        pre_f = pre[mask]
+        post_f = post[mask]
+        w_f = w[mask]
+        kept_scan += len(w_f)
+        for a, b, ww in zip(pre_f, post_f, w_f):
+            item = (int(ww), int(a), int(b))
+            if len(heap) < max_edges:
+                heapq.heappush(heap, item)
+            elif item[0] > heap[0][0]:
+                heapq.heapreplace(heap, item)
+        if total % 5_000_000 < 1_000_000:
+            print(f"  scanned {total:,} rows, within-subset hits {kept_scan:,}, heap {len(heap)}")
+    print(f"  scanned {total:,} total; within-subset {kept_scan:,}")
     edges = [
-        {"from": int(a), "to": int(b), "weight": int(ww)}
-        for a, b, ww in zip(pre_f, post_f, w_f)
+        {"from": a, "to": b, "weight": ww}
+        for ww, a, b in sorted(heap, key=lambda t: -t[0])
     ]
     print(f"  kept {len(edges)} edges")
     return edges
+
 
 
 def add_hubs_from_weights(df, selected: list[int], k=25) -> list[int]:
@@ -541,7 +546,12 @@ def main() -> int:
     print(f"  traced rows: {len(df)}")
 
     selected = curate_body_ids(df)
-    selected = add_hubs_from_weights(df, selected, k=25)
+    # Hub expansion loads the full ~1GB weights table — skip when curation
+    # already reached a dense browser-sized set (avoids OOM on 16GB boxes).
+    if len(selected) < int(TARGET_NEURONS * 0.85):
+        selected = add_hubs_from_weights(df, selected, k=80)
+    else:
+        print(f"skip hub expansion (already {len(selected)} candidates ≥ 85% of target {TARGET_NEURONS})")
     selected = list(dict.fromkeys(selected))  # unique preserve order
     print(f"final candidate count: {len(selected)}")
 
@@ -674,6 +684,10 @@ def main() -> int:
             "edgeCount": len(edges),
             "skeletonFormat": "interleaved segment endpoint pairs (LineSegments stride 2)",
             "swcUrlTemplate": SWC_URL,
+            "subsetNote": (
+                f"Dense curated subset of {len(neurons)} real MaleCNS v1.0 SWC neurons "
+                "(optic/DN/AN/CX/MB/VNC/hubs) — not the full ~140k CNS; sized for browser WebGL."
+            ),
         },
         "neurons": neurons,
         "edges": edges,

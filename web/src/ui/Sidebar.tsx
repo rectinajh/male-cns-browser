@@ -40,8 +40,13 @@ export function Sidebar({ data, source }: Props) {
       <header className="sidebar-header">
         <h1>Male CNS Browser</h1>
         <p className="muted">
-          {data.meta.neuronCount} neurons · {data.meta.dataset}
+          {data.meta.neuronCount} real SWC neurons · {data.edges.length} edges · {data.meta.dataset}
         </p>
+        {data.meta.subsetNote ? (
+          <p className="muted" style={{ fontSize: "0.75rem", marginTop: 4 }}>
+            {data.meta.subsetNote}
+          </p>
+        ) : null}
       </header>
 
       <section>
@@ -96,7 +101,7 @@ export function Sidebar({ data, source }: Props) {
       </section>
 
       <footer className="sidebar-footer muted">
-        Real MaleCNS v1.0 SWC subset ·{" "}
+        Real MaleCNS v1.0 SWC (dense curated subset, not full CNS) ·{" "}
         <a href="https://male-cns.janelia.org/" target="_blank" rel="noreferrer">
           MaleCNS
         </a>{" "}

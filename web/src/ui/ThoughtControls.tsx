@@ -10,8 +10,9 @@ export function ThoughtControls({ playing, lastChain, onThink }: Props) {
     <div className="thought-controls">
       <h3>思考一次</h3>
       <p className="muted">
-        Each click picks a fresh random walk on neuPrint edges, then flashes a blue
-        #3BA7FF current along the skeletons (visual demo, not biophysics).
+        Each click picks a fresh random walk on connectome edges. Cyan-white
+        charge packets (#E8FFFF) race along real MaleCNS skeletons; somas flash
+        on arrival and leave a short afterglow (~4–8s demo, not biophysics).
       </p>
       {lastChain && lastChain.length >= 2 ? (
         <p className="muted path-meta">

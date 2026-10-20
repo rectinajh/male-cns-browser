@@ -116,9 +116,9 @@ function SceneContent({ data, source }: Props) {
   const setPlaying = useBrowserStore((s) => s.setPlaying);
 
   const bounds = useMemo(() => computeBounds(data), [data]);
-  const nodeRadius = Math.max(bounds.radius * 0.006, 0.25);
-  // Small tip — electrical spark on the wire, not a floating ball.
-  const tipSize = Math.max(bounds.radius * 0.007, 0.28);
+  const nodeRadius = Math.max(bounds.radius * 0.0045, 0.18);
+  // Small tip — electrical spark / charge packet on the wire
+  const tipSize = Math.max(bounds.radius * 0.006, 0.22);
 
   const neighborIds = useMemo(() => {
     if (selectedId == null) return new Set<number>();
@@ -132,17 +132,26 @@ function SceneContent({ data, source }: Props) {
 
   const segmentPairs = Boolean(data.meta.skeletonFormat?.includes("segment"));
 
-  const waypoints = useMemo(() => {
-    const ids =
-      activeChain && activeChain.length >= 2
-        ? activeChain
-        : (thought?.waypoints ?? []);
-    const chain = ids
+  const chainIds = useMemo(() => {
+    if (activeChain && activeChain.length >= 2) return activeChain;
+    return thought?.waypoints ?? [];
+  }, [activeChain, thought]);
+
+  const chainNeurons = useMemo(() => {
+    return chainIds
       .map((id) => source.getNeuron(id))
-      .filter((n): n is NonNullable<typeof n> => !!n)
-      .map((n) => ({ soma: n.soma, skeleton: n.skeleton }));
-    return buildThoughtConductancePath(chain);
-  }, [activeChain, thought, source]);
+      .filter((n): n is NonNullable<typeof n> => !!n);
+  }, [chainIds, source]);
+
+  const waypoints = useMemo(() => {
+    return buildThoughtConductancePath(
+      chainNeurons.map((n) => ({ soma: n.soma, skeleton: n.skeleton })),
+    );
+  }, [chainNeurons]);
+
+  const chainSomas = useMemo(() => chainNeurons.map((n) => n.soma), [chainNeurons]);
+
+  const chainIdSet = useMemo(() => new Set(chainIds), [chainIds]);
 
   return (
     <>
@@ -157,14 +166,21 @@ function SceneContent({ data, source }: Props) {
         edges={data.edges}
         selectedId={selectedId}
         neighborIds={neighborIds}
+        chainIds={playing ? chainIdSet : undefined}
         segmentPairs={segmentPairs || data.neurons.length > 20}
       />
-      <KeyNodes neurons={data.neurons} neighborIds={neighborIds} nodeRadius={nodeRadius} />
+      <KeyNodes
+        neurons={data.neurons}
+        neighborIds={neighborIds}
+        chainIds={playing ? chainIdSet : undefined}
+        nodeRadius={nodeRadius}
+      />
       <ThoughtPulse
         waypoints={waypoints}
+        chainSomas={chainSomas}
         playing={playing}
-        color="#3BA7FF"
         tipSize={tipSize}
+        somaRadius={nodeRadius}
         onDone={() => setPlaying(false)}
       />
     </>
@@ -172,10 +188,12 @@ function SceneContent({ data, source }: Props) {
 }
 
 export function NeuronScene({ data, source }: Props) {
+  // Cap DPR a bit when the subset is dense so the browser stays interactive.
+  const dense = data.neurons.length > 800;
   return (
     <Canvas
       camera={{ position: [80, 20, 80], fov: 45, near: 0.1, far: 5000 }}
-      dpr={[1, 2]}
+      dpr={dense ? [1, 1.5] : [1, 2]}
       gl={{ antialias: true }}
       onPointerMissed={() => useBrowserStore.getState().setSelectedId(null)}
     >

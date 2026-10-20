@@ -36,6 +36,9 @@ export type SubsetMeta = {
     note?: string;
   };
   swcUrlTemplate?: string;
+  /** Explains dense curated subset vs full MaleCNS. */
+  subsetNote?: string;
+  connectivitySource?: string;
 };
 
 export type SubsetFile = {

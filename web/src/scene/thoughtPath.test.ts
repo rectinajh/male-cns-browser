@@ -6,6 +6,7 @@ import {
   closestPair,
   pickRandomThoughtChain,
   pulseDurationSeconds,
+  somaArrivalProgress,
   sampleAt,
   uniqueSkeletonPoints,
   walkSkeletonToward,
@@ -34,10 +35,28 @@ describe("thoughtPath", () => {
     expect(sampleAt(points, total, 0.5).x).toBeCloseTo(5, 5);
   });
 
-  it("pulseDurationSeconds stays in a visible demo window for long MaleCNS paths", () => {
-    expect(pulseDurationSeconds(123)).toBeGreaterThanOrEqual(1.5);
-    expect(pulseDurationSeconds(123)).toBeLessThanOrEqual(4.0);
-    expect(pulseDurationSeconds(1)).toBeGreaterThanOrEqual(1.5);
+  it("pulseDurationSeconds stays in a longer readable demo window for MaleCNS paths", () => {
+    expect(pulseDurationSeconds(123)).toBeGreaterThanOrEqual(4.0);
+    expect(pulseDurationSeconds(123)).toBeLessThanOrEqual(8.0);
+    expect(pulseDurationSeconds(1)).toBeGreaterThanOrEqual(4.0);
+    expect(pulseDurationSeconds(500)).toBeLessThanOrEqual(8.0);
+  });
+
+  it("somaArrivalProgress maps somas onto path progress", () => {
+    const wps: Vec3[] = [
+      [0, 0, 0],
+      [10, 0, 0],
+      [20, 0, 0],
+    ];
+    const arrivals = somaArrivalProgress(wps, [
+      [0, 0, 0],
+      [10, 0, 0],
+      [20, 0, 0],
+    ]);
+    expect(arrivals[0]).toBeLessThan(0.15);
+    expect(arrivals[1]).toBeGreaterThan(0.35);
+    expect(arrivals[1]).toBeLessThan(0.65);
+    expect(arrivals[2]).toBeGreaterThan(0.85);
   });
 
   it("advanceProgress reaches 1 in roughly durationSec and clamps huge dt", () => {

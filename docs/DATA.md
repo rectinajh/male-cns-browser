@@ -8,7 +8,7 @@
 | Source | https://male-cns.janelia.org/ (public GCS SWC + flat connectome) |
 | License | **CC-BY** — attribute FlyEM / HHMI Janelia and MaleCNS collaborators |
 | Geometry | **Real** MaleCNS SWC skeletons (downsampled), not synthetic |
-| Counts | ~250–350 neurons, hundreds–thousands of edges, ≥2 thought paths |
+| Counts | ~1000–1500 real SWC neurons (dense curated; not full ~140k CNS), thousands of edges, ≥2 thought paths |
 | SWC URL | `https://storage.googleapis.com/flyem-male-cns/v1.0/segmentation/skeletons-malecns/skeletons-swc/{bodyId}.swc` |
 | Weights | `connectome-weights-male-cns-v1.0-minconf-0.5.feather` (body_pre, body_post, weight) |
 | Annotations | `body-annotations-male-cns-v1.0-minconf-0.5.feather` |

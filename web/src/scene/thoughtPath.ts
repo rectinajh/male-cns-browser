@@ -32,15 +32,18 @@ export function sampleAt(points: THREE.Vector3[], total: number, t: number): THR
 }
 
 /**
- * Playback duration in seconds. Real MaleCNS paths are long; keep the flash
- * snappy so the #3BA7FF pulse is readable in a demo (not proportional forever).
+ * Playback duration in seconds — long enough to read cyan-white charge packets
+ * traveling along real MaleCNS arbors (demo window, not biophysics).
  */
 export function pulseDurationSeconds(pathLength: number, speed = 1): number {
-  const base = Math.max(pathLength * 0.012, 1.6);
-  return THREE.MathUtils.clamp(base / Math.max(speed, 0.05), 1.5, 4.0);
+  const base = Math.max(pathLength * 0.028, 4.2);
+  return THREE.MathUtils.clamp(base / Math.max(speed, 0.05), 4.0, 8.0);
 }
 
-/** Advance normalized progress; clamps huge dt (tab background) so one frame can't skip the whole flash. */
+/** Seconds the filament / soma afterglow lingers after the tip lands. */
+export const PULSE_AFTERGLOW_SECONDS = 0.75;
+
+/** Advance normalized progress; clamps huge dt (tab background). */
 export function advanceProgress(progress: number, dt: number, durationSec: number): number {
   const step = Math.min(Math.max(dt, 0), 0.08) / Math.max(durationSec, 0.2);
   return Math.min(1, progress + step);
@@ -205,6 +208,38 @@ export function buildThoughtConductancePath(chain: PathNeuron[]): Vec3[] {
   }
 
   return out.length >= 2 ? out : chain.map((n) => n.soma);
+}
+
+/**
+ * Map each chain soma to the nearest path progress t ∈ [0,1] so somas can
+ * flash when the charge front arrives.
+ */
+export function somaArrivalProgress(
+  waypoints: Vec3[],
+  somas: Vec3[],
+): number[] {
+  if (waypoints.length < 2 || somas.length === 0) return somas.map(() => 0);
+  const { points, total } = buildPath(waypoints);
+  // Pre-sample path at fine steps for nearest lookup
+  const samples: { t: number; p: THREE.Vector3 }[] = [];
+  const steps = Math.min(400, Math.max(80, Math.ceil(total * 2)));
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    samples.push({ t, p: sampleAt(points, total, t) });
+  }
+  return somas.map((s) => {
+    let bestT = 0;
+    let bestD = Infinity;
+    const sv = new THREE.Vector3(...s);
+    for (const s0 of samples) {
+      const d = s0.p.distanceToSquared(sv);
+      if (d < bestD) {
+        bestD = d;
+        bestT = s0.t;
+      }
+    }
+    return bestT;
+  });
 }
 
 export type EdgeLike = { from: number; to: number; weight: number };

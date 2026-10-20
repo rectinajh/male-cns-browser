@@ -8,6 +8,8 @@ type Props = {
   edges: Edge[];
   selectedId: number | null;
   neighborIds: Set<number>;
+  /** Neurons on the active thought chain — brighten their filaments. */
+  chainIds?: Set<number>;
   /** skeleton is interleaved segment pairs when true (MaleCNS export). */
   segmentPairs?: boolean;
 };
@@ -17,6 +19,7 @@ export function NeuronLines({
   edges,
   selectedId,
   neighborIds,
+  chainIds,
   segmentPairs = true,
 }: Props) {
   const { positions, colors } = useMemo(() => {
@@ -27,14 +30,18 @@ export function NeuronLines({
       const base = colorForType(n.type);
       const isSel = n.id === selectedId;
       const isN = neighborIds.has(n.id);
+      const onChain = chainIds?.has(n.id) ?? false;
       let c: THREE.Color;
-      if (isSel) {
+      if (onChain) {
+        c = base.clone().lerp(new THREE.Color("#E8FFFF"), 0.55);
+        c.offsetHSL(0, 0.08, 0.18);
+      } else if (isSel) {
         c = base.clone().lerp(new THREE.Color("#ffffff"), 0.35);
         c.offsetHSL(0, 0.05, 0.12);
       } else if (isN) {
         c = base.clone().offsetHSL(0, 0, 0.05);
-      } else if (selectedId != null) {
-        c = dimColor(base, 0.62);
+      } else if (selectedId != null || (chainIds && chainIds.size > 0)) {
+        c = dimColor(base, chainIds && chainIds.size > 0 ? 0.55 : 0.62);
       } else {
         c = base;
       }
@@ -56,7 +63,7 @@ export function NeuronLines({
       positions: new Float32Array(pos),
       colors: new Float32Array(col),
     };
-  }, [neurons, selectedId, neighborIds, segmentPairs]);
+  }, [neurons, selectedId, neighborIds, chainIds, segmentPairs]);
 
   const neighborEdgeGeo = useMemo(() => {
     if (selectedId == null) return null;
