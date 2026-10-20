@@ -5,3 +5,7 @@ dist/
 web/node_modules/
 web/dist/
 web/coverage/
+
+# local reference renders
+*.png
+!web/public/**/*.png
