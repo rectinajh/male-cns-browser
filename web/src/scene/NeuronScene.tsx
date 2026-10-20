@@ -60,7 +60,8 @@ function SceneContent({ data, source }: Props) {
 
   const bounds = useMemo(() => computeBounds(data), [data]);
   const nodeRadius = Math.max(bounds.radius * 0.006, 0.25);
-  const pulseSize = Math.max(bounds.radius * 0.012, 0.5);
+  // Large enough to read against dense MaleCNS skeletons from orbit distance.
+  const pulseSize = Math.max(bounds.radius * 0.04, 2.2);
 
   const neighborIds = useMemo(() => {
     if (selectedId == null) return new Set<number>();
