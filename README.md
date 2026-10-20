@@ -1,6 +1,6 @@
 # Male CNS Browser
 
-Open-source **3D fruit-fly CNS neuron browser** for exploring a dense MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” charge pulse along a fresh random connectome walk each click.
+Open-source **3D fruit-fly CNS neuron browser** for exploring a dense MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” lightning pulse along a fresh random connectome walk each click.
 
 > Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required at runtime).
 
@@ -23,7 +23,7 @@ npm run build
 
 - Orbit a dark-background 3D scene of **real MaleCNS SWC skeletons** (rainbow by type), auto-fitted and slowly auto-rotating
 - Click key nodes (somas) to see id / type / side and neighbors
-- Press **思考一次** for a random edge walk: **blue charge packets** (`#3BA7FF`) race along real arbors, somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
+- Press **思考一次** for a random edge walk: **blue lightning** (`#3BA7FF` / `#5B9FFF`) crackles along real arbors (jagged bolt, flicker, tip branches), somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
 - Right-hand panel: Janelia reference renders (local copies; see below)
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; optional neuPrint enrich via `scripts/prepare/enrich_neuprint.py`
 
