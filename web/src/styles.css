@@ -328,6 +328,128 @@ a {
   line-height: 1.5;
 }
 
+.kimi-md {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #d7e4f5;
+  overflow-x: auto;
+}
+
+.kimi-md > *:first-child {
+  margin-top: 0;
+}
+
+.kimi-md > *:last-child {
+  margin-bottom: 0;
+}
+
+.kimi-md h1,
+.kimi-md h2,
+.kimi-md h3,
+.kimi-md h4 {
+  margin: 0.85rem 0 0.4rem;
+  color: #e8f2ff;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-weight: 650;
+}
+
+.kimi-md h1 { font-size: 1.05rem; }
+.kimi-md h2 { font-size: 1rem; }
+.kimi-md h3 { font-size: 0.95rem; }
+.kimi-md h4 { font-size: 0.9rem; }
+
+.kimi-md p {
+  margin: 0.45rem 0;
+  white-space: normal;
+}
+
+.kimi-md ul,
+.kimi-md ol {
+  margin: 0.4rem 0;
+  padding-left: 1.25rem;
+}
+
+.kimi-md li {
+  margin: 0.2rem 0;
+}
+
+.kimi-md strong {
+  color: #f2f7ff;
+  font-weight: 700;
+}
+
+.kimi-md em {
+  color: #c5d7ee;
+}
+
+.kimi-md code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.82em;
+  background: #122033;
+  border: 1px solid #243650;
+  border-radius: 4px;
+  padding: 0.05rem 0.3rem;
+}
+
+.kimi-md pre {
+  margin: 0.55rem 0;
+  padding: 0.65rem 0.75rem;
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #243650;
+  background: #071018;
+}
+
+.kimi-md pre code {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.kimi-md a {
+  color: #7ec4ff;
+}
+
+.kimi-md blockquote {
+  margin: 0.5rem 0;
+  padding: 0.2rem 0.75rem;
+  border-left: 3px solid #3ba7ff88;
+  color: #a9bfd8;
+}
+
+.kimi-md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.55rem 0;
+  font-size: 0.82rem;
+}
+
+.kimi-md th,
+.kimi-md td {
+  border: 1px solid #2a3d55;
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.kimi-md th {
+  background: #122033;
+  color: #d5e7fb;
+  font-weight: 650;
+}
+
+.kimi-md tr:nth-child(even) td {
+  background: #0c1624;
+}
+
+.kimi-md hr {
+  border: 0;
+  border-top: 1px solid #243650;
+  margin: 0.75rem 0;
+}
+
 @media (max-width: 1100px) {
   .app {
     grid-template-columns: minmax(240px, 300px) 1fr minmax(180px, 240px);

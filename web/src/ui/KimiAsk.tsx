@@ -1,4 +1,6 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type { Neuron } from "../types";
 
 type Props = {
@@ -55,7 +57,7 @@ export function KimiAsk({ neuron }: Props) {
 
   return (
     <div className="kimi-ask">
-      <h3>Kimi 查询</h3>
+      <h3>AI 查询</h3>
       <p className="muted">
         {neuron
           ? `针对已选：${neuron.name}（${neuron.type} · ${neuron.side} · #${neuron.id}）`
@@ -75,13 +77,15 @@ export function KimiAsk({ neuron }: Props) {
         onClick={() => void ask()}
         disabled={loading}
       >
-        {loading ? "查询中…" : "问 Kimi"}
+        {loading ? "查询中…" : "问 AI"}
       </button>
       {error ? <p className="kimi-error">{error}</p> : null}
       {answer ? (
         <div className="kimi-answer">
           <h4>解释</h4>
-          <p>{answer}</p>
+          <div className="kimi-md">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
+          </div>
         </div>
       ) : null}
     </div>

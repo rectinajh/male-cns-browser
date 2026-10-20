@@ -21,3 +21,5 @@ web/public/reference/**
 .neuprint.token
 
 .vercel/
+.vercel
+.env*

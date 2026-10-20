@@ -40,7 +40,7 @@ npm run build
 - Orbit a dark-background 3D scene of **real MaleCNS SWC skeletons** (rainbow by type), auto-fitted and slowly auto-rotating
 - Click key nodes (somas) to see id / type / side and neighbors
 - Press **思考一次** for a random edge walk: **blue lightning** (`#3BA7FF` / `#5B9FFF`) crackles along real arbors (jagged bolt, flicker, tip branches), somas flash on arrival, then a short afterglow (~0.75s); demo window about **4–8s** (not biophysics)
-- **Kimi 查询**：选中神经元后可提问类型含义 / 功能科普；密钥经本地 Vite `/api/kimi` 代理，**不会**进浏览器（见下）
+- **AI 查询（问 AI）**：选中神经元后可提问类型含义 / 功能科普；密钥经本地 Vite `/api/kimi` 代理，**不会**进浏览器（见下）
 - Right-hand panel: Janelia reference renders (local copies; see below)
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; optional neuPrint enrich via `scripts/prepare/enrich_neuprint.py`
 
@@ -79,9 +79,9 @@ cp mcns-median-size-per-type-40-0626-3840x2160.png \
 Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
 
 
-## Kimi 神经元解释（本地 / Vercel）
+## AI 神经元解释（本地 / Vercel）
 
-浏览器里「Kimi 查询」会把问题 + 当前神经元上下文（id / name / type / side）`POST /api/kimi`，由**服务端**读取密钥再转调 Moonshot Chat Completions。**API Key 不会下发到前端。**
+浏览器里「AI 查询 / 问 AI」会把问题 + 当前神经元上下文（id / name / type / side）`POST /api/kimi`，由**服务端**读取密钥再转调 Moonshot Chat Completions。**API Key 不会下发到前端。**
 
 **本地开发**
 
