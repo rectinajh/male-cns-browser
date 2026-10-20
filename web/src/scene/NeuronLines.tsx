@@ -33,7 +33,7 @@ export function NeuronLines({
       const onChain = chainIds?.has(n.id) ?? false;
       let c: THREE.Color;
       if (onChain) {
-        c = base.clone().lerp(new THREE.Color("#E8FFFF"), 0.55);
+        c = base.clone().lerp(new THREE.Color("#3BA7FF"), 0.55);
         c.offsetHSL(0, 0.08, 0.18);
       } else if (isSel) {
         c = base.clone().lerp(new THREE.Color("#ffffff"), 0.35);

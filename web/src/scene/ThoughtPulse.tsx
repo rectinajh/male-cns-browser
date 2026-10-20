@@ -12,10 +12,10 @@ import {
 } from "./thoughtPath";
 
 const PACKET_COUNT = 7;
-/** Bright cyan-white charge core. */
-const CORE = "#E8FFFF";
-/** Hot cyan filament. */
-const FILAMENT = "#5CE1FF";
+/** Brighter blue charge core (electric tip / packets). */
+const CORE = "#9AD4FF";
+/** Design-blue filament / trail / afterglow. */
+const FILAMENT = "#3BA7FF";
 
 type Props = {
   waypoints: Vec3[];
@@ -30,9 +30,9 @@ type Props = {
 };
 
 /**
- * High-firing electrical conduction: cyan-white charge packets race along the
- * skeleton polyline, somas flash on arrival, filament / soma afterglow fades
- * briefly after the tip lands.
+ * High-firing electrical conduction: blue charge packets (#3BA7FF / brighter
+ * core) race along the skeleton polyline, somas flash on arrival, filament /
+ * soma afterglow fades briefly after the tip lands.
  */
 export function ThoughtPulse({
   waypoints,

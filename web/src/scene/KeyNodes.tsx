@@ -7,7 +7,7 @@ import { colorForType } from "./colorForType";
 type Props = {
   neurons: Neuron[];
   neighborIds: Set<number>;
-  /** Active thought-chain ids — soft cyan emissive while pulse plays. */
+  /** Active thought-chain ids — soft blue emissive while pulse plays. */
   chainIds?: Set<number>;
   nodeRadius: number;
 };
@@ -69,7 +69,7 @@ export function KeyNodes({ neurons, neighborIds, chainIds, nodeRadius }: Props) 
             <meshStandardMaterial
               color={color}
               emissive={
-                selected || onChain ? "#5CE1FF" : neighbor ? color : "#000000"
+                selected || onChain ? "#3BA7FF" : neighbor ? color : "#000000"
               }
               emissiveIntensity={selected ? 0.95 : onChain ? 0.7 : neighbor ? 0.25 : 0}
               roughness={0.4}

@@ -32,7 +32,7 @@ export function sampleAt(points: THREE.Vector3[], total: number, t: number): THR
 }
 
 /**
- * Playback duration in seconds — long enough to read cyan-white charge packets
+ * Playback duration in seconds — long enough to read blue charge packets
  * traveling along real MaleCNS arbors (demo window, not biophysics).
  */
 export function pulseDurationSeconds(pathLength: number, speed = 1): number {
