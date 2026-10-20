@@ -2,7 +2,7 @@
 
 Open-source **3D fruit-fly CNS neuron browser** for exploring a MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” pulse along preset decision paths.
 
-> Visual demo only — not a biophysical spike model. No neuPrint token required to run the shipped fixture.
+> Visual demo only — not a biophysical spike model. Ships a **real MaleCNS v1.0 SWC subset** (no neuPrint token required).
 
 ## Quick start
 
@@ -21,7 +21,7 @@ npm run build
 
 ## Features (v0.1)
 
-- Orbit a dark-background 3D scene (brain blob + neck + VNC stub fixture)
+- Orbit a dark-background 3D scene of **real MaleCNS skeletons** (rainbow by type)
 - Click key nodes (somas) to see id / type / side and neighbors
 - Choose a thought path and press **思考一次** for a `#3BA7FF` pulse along waypoints
 - `ConnectomeSource` abstraction with `LocalJsonSource` today; neuPrint reserved for later
@@ -30,7 +30,7 @@ npm run build
 
 - **Code:** MIT (see [`LICENSE`](./LICENSE))
 - **MaleCNS data:** CC-BY — [FlyEM / HHMI Janelia Male CNS](https://male-cns.janelia.org/) (`male-cns:v1.0`)
-- The committed `web/public/data/subset.json` is a **synthetic fixture** shaped like brain + neck + VNC so CI and first-time clones work offline. Real SWC/neuPrint export is documented under [`scripts/prepare`](./scripts/prepare) and [`docs/DATA.md`](./docs/DATA.md).
+- Committed `web/public/data/subset.json` is a curated **real SWC** subset (~300 neurons) from public GCS. Rebuild with [`scripts/prepare/build_subset.py`](./scripts/prepare/build_subset.py); see [`docs/DATA.md`](./docs/DATA.md).
 
 ## Docs
 

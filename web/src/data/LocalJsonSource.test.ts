@@ -24,20 +24,32 @@ describe("LocalJsonSource", () => {
     expect(data.meta.neuronCount).toBe(data.neurons.length);
   });
 
-  it("getNeuron returns known cell", () => {
+  it("getNeuron returns known cell from subset", () => {
+    const fixture = loadFixture();
     const src = new LocalJsonSource();
-    src.loadFrom(loadFixture());
-    const n = src.getNeuron(2001);
+    src.loadFrom(fixture);
+    const first = fixture.neurons[0];
+    const n = src.getNeuron(first.id);
     expect(n).toBeDefined();
-    expect(n?.name).toBe("IN_hub");
+    expect(n?.name).toBe(first.name);
     expect(n?.soma).toHaveLength(3);
     expect(n?.skeleton.length).toBeGreaterThan(1);
+    // Real MaleCNS body IDs are typically 4+ digits
+    expect(first.id).toBeGreaterThan(1000);
   });
 
   it("neighbors returns in and out links", () => {
+    const fixture = loadFixture();
     const src = new LocalJsonSource();
-    src.loadFrom(loadFixture());
-    const links = src.neighbors(2001);
+    src.loadFrom(fixture);
+    // pick a neuron that has edges
+    const edged = new Set<number>();
+    for (const e of fixture.edges) {
+      edged.add(e.from);
+      edged.add(e.to);
+    }
+    const id = [...edged][0];
+    const links = src.neighbors(id);
     expect(links.length).toBeGreaterThan(0);
     const dirs = new Set(links.map((l) => l.direction));
     expect(dirs.has("in") || dirs.has("out")).toBe(true);
