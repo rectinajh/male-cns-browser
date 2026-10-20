@@ -5,7 +5,7 @@ const REFERENCES = [
     alt: "Male CNS dimorphic brain reference render",
   },
   {
-    src: "/reference/mcns-median-size-per-type-40-0626-3840x2160-white.png",
+    src: "/reference/mcns-median-size-per-type-40-0626-3840x2160.png",
     caption: "Median size per type",
     alt: "Male CNS median size per type reference render",
   },

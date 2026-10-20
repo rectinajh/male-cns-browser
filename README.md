@@ -40,8 +40,8 @@ The right-hand panel expects two Janelia reference renders under `web/public/ref
 mkdir -p web/public/reference
 cp dimorphic-brain-only.png \
   web/public/reference/dimorphic-brain-only.png
-cp mcns-median-size-per-type-40-0626-3840x2160-white.png \
-  web/public/reference/mcns-median-size-per-type-40-0626-3840x2160-white.png
+cp mcns-median-size-per-type-40-0626-3840x2160.png \
+  web/public/reference/mcns-median-size-per-type-40-0626-3840x2160.png
 ```
 
 Vite serves them at `/reference/...`. Without the copies the panel frames stay empty.
