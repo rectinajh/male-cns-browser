@@ -2,7 +2,7 @@
 
 # Male CNS Browser
 
-**Live demo:** _TBD — deploying to Vercel_
+**Live demo:** [https://male-cns-browser.vercel.app](https://male-cns-browser.vercel.app)
 
 Open-source **3D fruit-fly CNS neuron browser** for exploring a dense MaleCNS-shaped connectome subset, inspecting key nodes, and playing a blue “think once” lightning pulse along a fresh random connectome walk each click.
 
